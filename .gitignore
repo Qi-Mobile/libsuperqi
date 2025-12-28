@@ -111,5 +111,7 @@ fabric.properties
 
 !.idea/codeStyles
 !.idea/runConfigurations
+main.go
+res/**
 
 # End of https://www.toptal.com/developers/gitignore/api/goland+all,go

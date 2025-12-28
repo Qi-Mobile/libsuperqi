@@ -32,6 +32,11 @@ func (client *Client) ApplyToken(authCode string) (ApplyTokenResponse, error) {
 
 	var body ApplyTokenResponse
 	err = json.Unmarshal(response, &body)
+
+	if err != nil {
+		return ApplyTokenResponse{}, fmt.Errorf("failed to decode response body %w", err)
+	}
+
 	return body, err
 }
 
@@ -53,6 +58,11 @@ func (client *Client) InquiryUserInfo(accessToken string) (InquiryUserInfoRespon
 
 	var body InquiryUserInfoResponse
 	err = json.Unmarshal(response, &body)
+
+	if err != nil {
+		return InquiryUserInfoResponse{}, fmt.Errorf("failed to decode response body %w", err)
+	}
+
 	return body, err
 }
 
@@ -74,6 +84,11 @@ func (client *Client) InquiryUserCardList(accessToken string) (InquiryUserCardLi
 
 	var body InquiryUserCardListResponse
 	err = json.Unmarshal(response, &body)
+
+	if err != nil {
+		return InquiryUserCardListResponse{}, fmt.Errorf("failed to decode response body %w", err)
+	}
+
 	return body, err
 }
 
@@ -114,8 +129,32 @@ func (client *Client) Pay(amount int, requestId, accessToken, customerId, orderD
 		return PayResponse{}, fmt.Errorf("failed to decode response body %w", err)
 	}
 
-	if body.Result.ResultStatus == "F" {
-		return PayResponse{}, fmt.Errorf("failed to make payment: %v", body.Result.ResultMessage)
-	}
 	return body, nil
+}
+
+func (client *Client) InquiryPayment(paymentId, paymentRequestId string) (InquiryPaymentResponse, error) {
+	const path = "/v1/payments/inquiryPayment"
+	params := map[string]any{
+		"paymentId":        paymentId,
+		"paymentRequestId": paymentRequestId,
+	}
+
+	headers, err := client.buildHeaders("POST", path, params)
+	if err != nil {
+		return InquiryPaymentResponse{}, err
+	}
+
+	response, err := client.sendRequest(path, "POST", headers, params)
+	if err != nil {
+		return InquiryPaymentResponse{}, err
+	}
+
+	var body InquiryPaymentResponse
+	err = json.Unmarshal(response, &body)
+
+	if err != nil {
+		return InquiryPaymentResponse{}, fmt.Errorf("failed to decode response body %w", err)
+	}
+
+	return body, err
 }

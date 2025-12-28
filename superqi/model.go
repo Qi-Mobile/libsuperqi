@@ -2,6 +2,16 @@ package superqi
 
 import "time"
 
+type PaymentStatus string
+
+//goland:noinspection GoUnusedConst
+const (
+	PaymentStatusProcessing  PaymentStatus = "PROCESSING"
+	PaymentStatusAuthSuccess PaymentStatus = "AUTH_SUCCESS"
+	PaymentStatusSuccess     PaymentStatus = "SUCCESS"
+	PaymentStatusFail        PaymentStatus = "FAIL"
+)
+
 type Result struct {
 	ResultCode    string `json:"resultCode"`
 	ResultStatus  string `json:"resultStatus"`
@@ -68,4 +78,31 @@ type PayResponse struct {
 		Parameters  string `json:"parameters"`
 		RedirectUrl string `json:"redirectUrl"`
 	} `json:"redirectActionForm"`
+}
+
+type InquiryPaymentResponse struct {
+	PaymentId        string `json:"paymentId"`
+	PaymentRequestId string `json:"paymentRequestId"`
+	PaymentAmount    struct {
+		Currency string `json:"currency"`
+		Value    string `json:"value"`
+	} `json:"paymentAmount"`
+	PaymentTime   time.Time `json:"paymentTime"`
+	PaymentStatus string    `json:"paymentStatus"`
+	Result        struct {
+		ResultStatus  string `json:"resultStatus"`
+		ResultCode    string `json:"resultCode"`
+		ResultMessage string `json:"resultMessage"`
+	} `json:"result"`
+	ExtendInfo   string `json:"extendInfo"`
+	Transactions []struct {
+		TransactionId     string    `json:"transactionId"`
+		TransactionTime   time.Time `json:"transactionTime"`
+		TransactionType   string    `json:"transactionType"`
+		TransactionAmount struct {
+			Currency string `json:"currency"`
+			Value    string `json:"value"`
+		} `json:"transactionAmount"`
+		TransactionStatus string `json:"transactionStatus"`
+	} `json:"transactions"`
 }
